@@ -10,6 +10,8 @@ class TestSellerAuth:
     api = UserAuth()
 
     def test_user_auth(self, auth_user_payload):
+        """Тест авторизации с валидными данными"""
+
         response = self.api.login(
             auth_user_payload
         )
@@ -40,6 +42,7 @@ class TestSellerAuth:
             "Валидацинное сообщение не соответсвует ожидаемому"
     
     def test_ivalid_password(self, auth_user_payload):
+        """Тест валидации невалидного пароля"""
         
         payload = copy.deepcopy(auth_user_payload)
         payload["password"] = "123456789"
@@ -56,6 +59,7 @@ class TestSellerAuth:
         assert response_data.get("message")  == "Неверный номер телефона или пароль"
 
     def test_response_token(self, auth_user_payload):
+        """Тест на наличие авторизационного токена в ответе от сервера"""
         
         response = self.api.login(
             auth_user_payload
@@ -68,6 +72,7 @@ class TestSellerAuth:
         assert "api_token" in response_data, f"Токен отсутствует в ответе"
         
     def test_get_unp_in_response(self, auth_user_payload):
+        """Тест наличия унп в ответе от сервера"""
         
         response = self.api.login(
             auth_user_payload
@@ -79,6 +84,8 @@ class TestSellerAuth:
         assert "unp" in response_data, f"unp не получен"
 
     def test_check_response_unp_with_db(self, connection_db, auth_user_payload):
+        """Тест на совпадения унп из ответа с унп в БД"""
+
         response = self.api.login(
             auth_user_payload
         )
@@ -96,6 +103,7 @@ class TestSellerAuth:
         assert db_unp["unp"] == seller_unp
 
     def test_check_reposnse_token_with_db(self, connection_db, auth_user_payload):
+        """Тест на совпадения токена из ответа с токеном, записанным в БД"""
         
         response = self.api.login(
             auth_user_payload
