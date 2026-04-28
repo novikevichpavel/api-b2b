@@ -123,4 +123,24 @@ class TestSellerAuth:
 
         assert response_data.get("api_token") == db_token["api_token"], "Токен не совпадает"
 
+    def test_empty_password_auth(self, auth_user_payload):
+        """Тест валидации при авторизации без передачи пароля"""
+
+        payload = copy.deepcopy(auth_user_payload)
+        payload["password"] = ""
+
+        response = self.api.login(
+            payload
+        )
+
+        response_data = response.json()
+
+        print(response_data)
+
+        assert response.status_code == 422, f"Ожидаемый статус - 422. Получен {response.status_code}"
+        assert "errors" in response_data, "Отсутствует валидационное сообщение в ответе от сервера"
+        assert "password" in response_data["errors"], "Отсутствует указание на поле с ошибкой в ответе от сервера"
+        assert response_data["errors"]["password"][0] == "Обязательное поле", f"Тест ошибки отдичается от ожидаемого. \
+            Получен {response_data["errors"]["password"][0]}"
+
 
