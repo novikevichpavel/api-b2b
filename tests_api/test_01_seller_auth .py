@@ -140,7 +140,25 @@ class TestSellerAuth:
         assert response.status_code == 422, f"Ожидаемый статус - 422. Получен {response.status_code}"
         assert "errors" in response_data, "Отсутствует валидационное сообщение в ответе от сервера"
         assert "password" in response_data["errors"], "Отсутствует указание на поле с ошибкой в ответе от сервера"
-        assert response_data["errors"]["password"][0] == "Обязательное поле", f"Тест ошибки отдичается от ожидаемого. \
+        assert response_data["errors"]["password"][0] == "Обязательное поле", f"Текст ошибки отличается от ожидаемого. \
             Получен {response_data["errors"]["password"][0]}"
 
+    def test_empty_phone_auth(self, auth_user_payload):
+        """"""
 
+        payload = copy.deepcopy(auth_user_payload)
+        payload["phone"] = ""
+
+        response = self.api.login(
+            payload
+        )
+
+        response_data = response.json()
+
+        print(response_data)
+
+        assert response.status_code == 422, f"Ожидаемый статус - 422. Получен: {response.status_code}"
+        assert "errors" in response_data, "Отсутствует валдиацинное сообщение в ответе от сервера"
+        assert "phone" in response_data["errors"], "Отсутствует указание на поле с ошибкой в ответе от сервера"
+        assert response_data["errors"]["phone"][0] == "Обязательное поле", f"Текст ошибки отличается от ожидаемого. \
+            Получен {response_data["errors"]["phone"][0]}"
