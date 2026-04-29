@@ -14,7 +14,7 @@
 #         """Тест создания товара с валидными данными"""
 
 #         response = self.api.create_offer(
-#             headers={"Apitoken": auth_user},
+#             headers={"Apitoken": auth_user["api_token"]},
 #             payload=create_offer_payload
 #         )
 
@@ -53,7 +53,7 @@
 #         """Тест на валидацию при содании дублируещего товара или товара, если бракод уже присвоен другому товару"""
         
 #         response = self.api.create_offer(
-#             headers={"Apitoken": auth_user},
+#             headers={"Apitoken": auth_user["api_token"]},
 #             payload=create_offer_payload
 #         )
 
@@ -80,7 +80,7 @@
 #         payload["offers"][0]["category_id"] = 3933
 
 #         response = self.api.create_offer(
-#             headers={"Apitoken": auth_user},
+#             headers={"Apitoken": auth_user["api_token"]},
 #             payload=payload
 #         )
 
@@ -112,7 +112,7 @@
 #         payload["offers"][0]["category_id"] = 3898
 
 #         response = self.api.create_offer(
-#             headers={"Apitoken": auth_user},
+#             headers={"Apitoken": auth_user["api_token"]},
 #             payload=payload
 #         )
 
@@ -145,7 +145,7 @@
 #         payload["offers"][0]["barcode"] = "10000061"    
 
 #         response = self.api.create_offer(
-#             headers={"Apitoken": auth_user},
+#             headers={"Apitoken": auth_user["api_token"]},
 #             payload=payload
 #         )
 
@@ -183,7 +183,7 @@
 #         payload["offers"][0]["country_id"] = 1
 
 #         response = self.api.create_offer(
-#             headers={"Apitoken": auth_user},
+#             headers={"Apitoken": auth_user["api_token"]},
 #             payload=payload
 #         )
 
@@ -197,7 +197,7 @@
 #         payload["offers"][0]["barcode"] = 16634560
 
 #         response = self.api.create_offer(
-#             headers={"Apitoken": auth_user},
+#             headers={"Apitoken": auth_user["api_token"]},
 #             payload=payload
 #         )
 
@@ -227,7 +227,7 @@
 #         payload["offers"][0]["barcode"] = "1847563"
 
 #         response = self.api.create_offer(
-#             headers={"Apitoken":auth_user},
+#             headers={"Apitoken": auth_user["api_token"]},
 #             payload=payload
 #         )
 

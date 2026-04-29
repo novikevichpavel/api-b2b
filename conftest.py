@@ -31,11 +31,13 @@ def auth_user(auth_user_payload):
     """Поолучение авторизационного токена"""
 
     api = UserAuth()
-    # response = api.login(phone=auth_user_payload["phone"], password=auth_user_payload["password"])
-    response = api.login(auth_user_payload)
-    token = response.json()["api_token"]
 
-    return token
+    response = api.login(auth_user_payload)
+
+    return {
+        "api_token": response.json()["api_token"],
+        "unp": response.json()["unp"]
+    }
 
 @pytest.fixture
 def create_offer_payload():
@@ -86,8 +88,53 @@ def create_offer_payload():
                         ]           
                 }      
 
+
 @pytest.fixture
-def create_offer_draft_payload():
+def create_offer_draft_mannualy():
+    return {
+            "step":3,
+            "curStep":3,
+            "name":"Гель для теста",
+            "options":1,
+            "optionsArr":
+                    [
+                        {
+                            "count_in_kit":2
+                        }
+                    ],
+            "properties":
+                    {
+                        "149":5514
+                    },
+            "dimensions":
+                    {
+                        "length":"35",
+                        "width":"55",
+                        "height":"29",
+                        "weight":"400"
+                    },
+            "stepOptions":"1",
+            "brand_name":"Blocker",
+            "category_id":4830,
+            "barcode":"48146456",
+            "brand_id":421,
+            "manufacturer_name":"Годрик Гриффиндор",
+            "country_id":80,
+            "importer_name":"",
+            "description":"Тестовый гель для душа",
+            "is_adult":False,
+            "prices":
+                    {
+                        "price":"2500"
+                    },
+            "installment_agreement":True,
+            "vat":0,
+            "images":[],
+            "image_ids":[]
+        }
+
+@pytest.fixture
+def create_offer_draft_payload_bulk():
 
     return {
             "offer_drafts":
@@ -139,4 +186,5 @@ def create_offer_draft_payload():
                         "stock":5
                         }
                         ]
-                }     
+                }
+
