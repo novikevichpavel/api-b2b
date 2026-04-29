@@ -7,7 +7,7 @@ class OfferDraftApi:
     endpoint = "/offer-drafts"
     bulk_endpoint = "/offer-drafts/bulk"
 
-    def create_offer_draft(self, headers, payload):
+    def create_offer_draft_manually(self, headers, payload):
          
         return requests.post(
             f"{BASE_PATH}{self.endpoint}",

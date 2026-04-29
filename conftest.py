@@ -90,7 +90,7 @@ def create_offer_payload():
 
 
 @pytest.fixture
-def create_offer_draft_mannualy():
+def create_offer_draft_manually_payload():
     return {
             "step":3,
             "curStep":3,
@@ -134,7 +134,7 @@ def create_offer_draft_mannualy():
         }
 
 @pytest.fixture
-def create_offer_draft_payload_bulk():
+def create_offer_draft_bulk_payload():
 
     return {
             "offer_drafts":

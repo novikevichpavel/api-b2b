@@ -5,22 +5,35 @@ from api.offer_draft import OfferDraftApi
 import copy
 
 
-class TestCreateDraftBulk:
+class TestCreateDraft:
 
     api = OfferDraftApi()
 
-    def test_create_offer_draft_manually(self, auth_user,):
-        """Ручно создание черновика товара с шагом 1"""
+    def test_create_offer_draft_manually(self, auth_user, create_offer_draft_manually_payload):
+        """Ручное создание черновика товара с шагом 1"""
 
+        response = self.api.create_offer_draft_manually(
+            headers={"Apitoken": auth_user["api_token"]},
+            payload=create_offer_draft_manually_payload
+        )
+    
+        response_data = response.json()
+
+        print(response_data)
+
+        assert response.status_code == 201, f"Ожидаемый статус - 201. Получен: {response.status_code}"
+        assert "message" in response_data, f""
+        assert response_data["message"] == "Товар сохранен как черновик"
+
+    # def test_create_offer_draft_manually
 
     
-    
-    def test_create_offer_draft_bulk(self, auth_user, create_offer_draft_payload_bulk, connection_db):
+    def test_create_offer_draft_bulk(self, auth_user, create_offer_draft_bulk_payload, connection_db):
         """Проверка создания черновика товара через онлайн-шаблон"""
 
         response = self.api.create_offer_draft_bulk(
             headers={"Apitoken": auth_user["api_token"]},
-            payload=create_offer_draft_payload_bulk
+            payload=create_offer_draft_bulk_payload
         )
 
         response_data = response.json()
