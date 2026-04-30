@@ -18,6 +18,17 @@ def connection_db():
         yield db_connection
 
 @pytest.fixture
+def get_seller_id_from_db(connection_db, auth_user):
+    with connection_db.cursor() as cursor:
+        cursor.execute("SELECT unp FROM seller_accounts WHERE api_token = 'Zcp9Ywz84VRhgVuVC2kKFYnznXqMoYb0oEdtUkNMBPTXkVrYpQpJth9QsQ6jt8qOyYdixQ6f3UHN4CV2'")
+        seller_unp = cursor.fetchone()
+
+        cursor.execute("SELECT id FROM sellers WHERE unp = %s;", (seller_unp["unp"],))
+        seller_id = cursor.fetchone()
+
+    return seller_id["id"]
+
+@pytest.fixture
 def auth_user_payload():
     """JSON для запроса на авторизацию"""
 
@@ -88,9 +99,37 @@ def create_offer_payload():
                         ]           
                 }      
 
+@pytest.fixture
+def create_offer_draft_manually_payload_first():
+
+    return {
+            "step":1,
+            "curStep":1,
+            "name":"акция 3333",
+            "options":1,
+            "optionsArr":
+                    [
+                        {
+                            "count_in_kit":2
+                        }
+                    ],
+            "properties":{},
+            "dimensions":{},
+            "stepOptions":"1",
+            "category_id":4830,
+            "barcode":"48157647",
+            "country_id":80,
+            "importer_name":"",
+            "is_adult":False,
+            "prices":{},
+            "installment_agreement":True,
+            "vat":0,
+            "images":[],
+            "image_ids":[]
+            }
 
 @pytest.fixture
-def create_offer_draft_manually_payload():
+def create_offer_draft_manually_payload_third():
     return {
             "step":3,
             "curStep":3,
