@@ -45,9 +45,9 @@
 #         # Тут тоже на переменную поменять
 #         assert db_data["id"] == 9583754, f"ID товара в БД не совпадает с ID в ответе от серевера. ID из БД {db_data["id"]}"
 #         assert db_data is not None, f"В БД нет товара с id: 9583754"
-#         assert sellers_id == db_data["seller_id"], f"ID не совпадают. ID для товара в таблие offers: {db_data["seller_id"]}, id полученный из таблицы sellers: {sellers_id}"
+#         assert sellers_id == db_data["seller_id"], f"ID не совпадают. ID для товара в таблице offers: \
+#             {db_data["seller_id"]}, id полученный из таблицы sellers: {sellers_id}"
 
-#         time.sleep(2)
 
 #     def test_repeat_create_same_offer(self, auth_user, create_offer_payload, connection_db):
 #         """Тест на валидацию при содании дублируещего товара или товара, если бракод уже присвоен другому товару"""
@@ -58,7 +58,6 @@
 #         )
 
 #         response_data = response.json()
-
 #         print(response_data["errors"]["offers.0.barcode"][0])
 
 #         with connection_db.cursor() as cursor:
@@ -150,7 +149,6 @@
 #         )
 
 #         response_data = response.json()
-        
 #         print(response_data)
 
 #         response_keys = list(response_data["errors"].keys())[0]
@@ -159,7 +157,6 @@
 #             return int(property_id.split(".")[-1])
         
 #         property_id = extract_property(response_keys)
-
 #         print(property_id)
 
 #         with connection_db.cursor() as cursor:
@@ -232,7 +229,6 @@
 #         )
 
 #         response_data = response.json()
-
 #         print(response_data["errors"]["offers.0.barcode"][0])
 
 #         with connection_db.cursor() as cursor:
@@ -241,8 +237,6 @@
 #                 (payload["offers"][0]["barcode"])
 #             )
 #             db_data = cursor.fetchone()
-
-#         print
 
 #         assert response.status_code == 422, f"Ожидаемый статус - 422. Получен {response.status_code}"
 #         assert "errors" in response_data, "В ответе отсутсвует валидация ошибки"
