@@ -18,15 +18,15 @@ def connection_db():
         yield db_connection
 
 @pytest.fixture
-def get_seller_id_from_db(connection_db, auth_user):
+def seller_id_from_db(connection_db, auth_user):
     with connection_db.cursor() as cursor:
         cursor.execute("SELECT unp FROM seller_accounts WHERE api_token = 'Zcp9Ywz84VRhgVuVC2kKFYnznXqMoYb0oEdtUkNMBPTXkVrYpQpJth9QsQ6jt8qOyYdixQ6f3UHN4CV2'")
         seller_unp = cursor.fetchone()
 
         cursor.execute("SELECT id FROM sellers WHERE unp = %s;", (seller_unp["unp"],))
-        seller_id = cursor.fetchone()
+        seller_id = cursor.fetchone()["id"]
 
-    return seller_id["id"]
+    return seller_id
 
 @pytest.fixture
 def auth_user_payload():
