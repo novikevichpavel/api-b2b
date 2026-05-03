@@ -1,6 +1,5 @@
 import pytest
 import pymysql
-import requests
 from api.password_auth import UserAuth
 
 @pytest.fixture
