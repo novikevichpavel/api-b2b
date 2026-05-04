@@ -1,6 +1,7 @@
 import pytest
 import pymysql
 from api.password_auth import UserAuth
+from api.offers import OffersAPI
 
 @pytest.fixture
 def connection_db():
@@ -18,14 +19,31 @@ def connection_db():
 
 @pytest.fixture
 def seller_id_from_db(connection_db, auth_user):
+    """Фикстура получение ID селлера из БД"""
+
     with connection_db.cursor() as cursor:
-        cursor.execute("SELECT unp FROM seller_accounts WHERE api_token = 'Zcp9Ywz84VRhgVuVC2kKFYnznXqMoYb0oEdtUkNMBPTXkVrYpQpJth9QsQ6jt8qOyYdixQ6f3UHN4CV2'")
+        cursor.execute("SELECT unp FROM seller_accounts WHERE api_token = %s", (auth_user["api_token"],))
         seller_unp = cursor.fetchone()
 
         cursor.execute("SELECT id FROM sellers WHERE unp = %s;", (seller_unp["unp"],))
         seller_id = cursor.fetchone()["id"]
 
     return seller_id
+
+@pytest.fixture
+def create_offer_fixt(auth_user, create_offer_payload):
+    """Фикстура создания товара"""
+    api = OffersAPI()
+    
+    response = api.create_offer(
+        headers={"Apitoken": auth_user["api_token"]},
+        payload=create_offer_payload
+    )
+
+    assert response.status_code == 201
+
+    return response.json()["offer_ids"][0]
+
 
 @pytest.fixture
 def auth_user_payload():
@@ -43,6 +61,8 @@ def auth_user(auth_user_payload):
     api = UserAuth()
 
     response = api.login(auth_user_payload)
+
+    assert response.status_code == 200, "Не удалось авторизоваться"
 
     return {
         "api_token": response.json()["api_token"],
@@ -98,37 +118,9 @@ def create_offer_payload():
                         ]           
                 }      
 
-@pytest.fixture
-def create_offer_draft_manually_payload_first():
-
-    return {
-            "step":1,
-            "curStep":1,
-            "name":"акция 3333",
-            "options":1,
-            "optionsArr":
-                    [
-                        {
-                            "count_in_kit":2
-                        }
-                    ],
-            "properties":{},
-            "dimensions":{},
-            "stepOptions":"1",
-            "category_id":4830,
-            "barcode":"48157647",
-            "country_id":80,
-            "importer_name":"",
-            "is_adult":False,
-            "prices":{},
-            "installment_agreement":True,
-            "vat":0,
-            "images":[],
-            "image_ids":[]
-            }
 
 @pytest.fixture
-def create_offer_draft_manually_payload_third():
+def create_offer_draft_manually_payload():
     return {
             "step":3,
             "curStep":3,
