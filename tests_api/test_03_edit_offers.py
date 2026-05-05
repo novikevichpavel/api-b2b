@@ -3,20 +3,15 @@ from api.offers import OffersAPI
 import copy
 
 
-
 class TestEditOffers:
 
     api = OffersAPI()
-
 
     @pytest.mark.regression
     def test_update_offer_invalid_status(self, auth_user, create_offer_payload, connection_db, create_offer_fixt):
         """Тест редактирования товара с неподходящим статусом"""
 
-
         offer_id = create_offer_fixt
-
-
 
         old_description = create_offer_payload["offers"][0]["description"]
 
@@ -30,7 +25,6 @@ class TestEditOffers:
         )
 
         response_data = response.json()
-
 
         with connection_db.cursor() as cursor:
             cursor.execute("SELECT description FROM offers WHERE id = %s", (offer_id,))
