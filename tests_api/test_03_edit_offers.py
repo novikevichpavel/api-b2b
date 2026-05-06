@@ -71,3 +71,38 @@ class TestEditOffers:
         assert db_data is not None
         assert db_data["status_id"] == status_id
         assert db_data["description"] == description
+
+    @pytest.mark.smoke
+    @pytest.mark.regression
+    @pytest.mark.parametrize("prop_option", [9514, 9751, 9752, 9753, 14669])
+    def test_update_requiered_prop_valid_status(self, connection_db, create_offer_payload, create_offer_fixt, auth_user, prop_option):
+
+        offer_id = create_offer_fixt
+
+        with connection_db.cursor() as cursor:
+            cursor.execute("UPDATE offers SET status_id = 3 WHERE id = %s", (offer_id,))
+            connection_db.commit()
+
+        payload = copy.deepcopy(create_offer_payload)
+        payload["offers"][0]["properties"]["149"] = prop_option
+        payload["offers"][0]["id"] = offer_id
+
+        response = self.api.change_offer(
+            headers={"Apitoken": auth_user["api_token"]},
+            payload=payload
+        )
+
+        response_data = response.json()
+
+        with connection_db.cursor() as cursor:
+            cursor.execute("SELECT id FROM offer_properties WHERE offer_id = %s AND property_id = %s", (offer_id, 149))
+            offer_prop_id = cursor.fetchone()["id"]
+
+            cursor.execute("SELECT property_option_id FROM offer_property_values WHERE offer_property_id = %s", (offer_prop_id,))
+            prop_option_id = cursor.fetchone()["property_option_id"]
+
+        assert prop_option_id is not None
+
+        assert response_data is not None
+        assert response.status_code == 200
+        assert prop_option_id == prop_option
