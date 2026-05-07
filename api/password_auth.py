@@ -23,3 +23,13 @@ class UserAuth:
             json=payload,
             verify=False
         )
+    
+    def sms_login(self, payload):
+        url = f"{self.BASE_URL}/login/using/sms"
+
+        return requests.post(
+            url,
+            json=payload,
+            verify=False
+        )
+        

@@ -70,6 +70,13 @@ def auth_user(auth_user_payload):
     }
 
 @pytest.fixture
+def sms_auth(auth_user_payload):
+
+    api = UserAuth()
+
+    response = api.sms_login(auth_user_payload["phone"])
+
+@pytest.fixture
 def create_offer_payload():
     """JSON для запроса на создание товара"""
     
