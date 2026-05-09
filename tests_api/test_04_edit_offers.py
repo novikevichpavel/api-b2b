@@ -7,6 +7,7 @@ class TestEditOffers:
 
     api = OffersAPI()
 
+    @pytest.mark.smoke
     @pytest.mark.regression
     def test_update_offer_invalid_status(self, auth_user, create_offer_payload, connection_db, create_offer_fixt):
         """Тест редактирования товара с неподходящим статусом"""
@@ -106,3 +107,4 @@ class TestEditOffers:
         assert response_data is not None
         assert response.status_code == 200
         assert prop_option_id == prop_option
+

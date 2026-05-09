@@ -17,6 +17,7 @@ def connection_db():
     ) as db_connection:
         yield db_connection
 
+
 @pytest.fixture
 def seller_id_from_db(connection_db, auth_user):
     """Фикстура получение ID селлера из БД"""
@@ -29,6 +30,7 @@ def seller_id_from_db(connection_db, auth_user):
         seller_id = cursor.fetchone()["id"]
 
     return seller_id
+
 
 @pytest.fixture
 def create_offer_fixt(auth_user, create_offer_payload):
@@ -54,6 +56,7 @@ def auth_user_payload():
         "password":"133322Qwe!@"
     }
 
+
 @pytest.fixture
 def auth_user(auth_user_payload):
     """Поолучение авторизационного токена"""
@@ -69,12 +72,14 @@ def auth_user(auth_user_payload):
         "unp": response.json()["unp"]
     }
 
+
 @pytest.fixture
 def sms_auth(auth_user_payload):
 
     api = UserAuth()
 
     response = api.sms_login(auth_user_payload["phone"])
+
 
 @pytest.fixture
 def create_offer_payload():
@@ -169,6 +174,7 @@ def create_offer_draft_manually_payload():
             "images":[],
             "image_ids":[]
         }
+
 
 @pytest.fixture
 def create_offer_draft_bulk_payload():
