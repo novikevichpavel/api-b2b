@@ -1,16 +1,16 @@
 import requests
-
-BASE_PATH = "https://api-test6-11.emall.by/api/b2b/v1"
+from config.config import API_BASE_URL
 
 
 class OffersAPI:
+    BASE_URL = API_BASE_URL
 
     endpoint = "/offers"
 
     def create_offer(self, headers, payload):
 
         return requests.post(
-            f"{BASE_PATH}{self.endpoint}",
+            f"{self.BASE_URL}{self.endpoint}",
             headers=headers,
             json=payload
         )
@@ -18,7 +18,7 @@ class OffersAPI:
     def change_offer(self, headers, payload):
 
         return requests.put(
-            f"{BASE_PATH}{self.endpoint}",
+            f"{self.BASE_URL}{self.endpoint}",
             headers=headers,
             json=payload
         )

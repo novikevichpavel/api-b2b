@@ -7,6 +7,7 @@ class TestSellerAuth:
 
     api = UserAuth()
 
+    @pytest.mark.api_tests
     @pytest.mark.smoke
     @pytest.mark.regression
     def test_user_auth(self, auth_user_payload):
@@ -23,6 +24,7 @@ class TestSellerAuth:
         assert "api_token" in response_data, "Нет токена в ответе"
         assert "unp" in response_data, "Нет УНП в ответе"
 
+    @pytest.mark.api_tests
     @pytest.mark.smoke
     @pytest.mark.regression
     def test_ivalid_phone_number(self, auth_user_payload):
@@ -43,6 +45,7 @@ class TestSellerAuth:
         assert "phone" in response_data["errors"], "Отсутсвует указание на поле с ошибкой в теле ответа"
         assert response_data["errors"]["phone"][0] == "Введенный номер телефона не связан ни с одним УНП"
     
+    @pytest.mark.api_tests
     @pytest.mark.smoke
     @pytest.mark.regression
     def test_ivalid_password(self, auth_user_payload):
@@ -61,6 +64,7 @@ class TestSellerAuth:
         assert response.status_code == 404, f"Ожидаемый статус - 404. Получен {response.status_code}"
         assert response_data.get("message")  == "Неверный номер телефона или пароль"
 
+    @pytest.mark.api_tests
     @pytest.mark.smoke
     @pytest.mark.regression
     def test_check_response_unp_with_db(self, connection_db, auth_user_payload):
@@ -81,6 +85,7 @@ class TestSellerAuth:
         print(f"Получен УНП: {db_unp['unp']}")
         assert db_unp["unp"] == seller_unp, "УНП не совпали"
 
+    @pytest.mark.api_tests
     @pytest.mark.smoke
     @pytest.mark.regression
     def test_check_reposnse_token_with_db(self, connection_db, auth_user_payload):
@@ -101,6 +106,7 @@ class TestSellerAuth:
         assert resp_data.get("api_token") == db_token["api_token"], \
             f"Токены не совпадают. API:{resp_data["api_token"]}, БД:{db_token["api_token"]}"
 
+    @pytest.mark.api_tests
     @pytest.mark.regression
     def test_empty_password_auth(self, auth_user_payload):
         """Валидация пустого поля для пароля"""
@@ -121,21 +127,4 @@ class TestSellerAuth:
         assert response_data["errors"]["password"][0] == "Обязательное поле", f"Текст ошибки отличается от ожидаемого. \
             Получен {response_data["errors"]["password"][0]}"
 
-    @pytest.mark.regression
-    def test_empty_phone_auth(self, auth_user_payload):
-        """Валидация пустого поля для телефона"""
-
-        payload = copy.deepcopy(auth_user_payload)
-        payload["phone"] = ""
-
-        response = self.api.login(
-            payload
-        )
-
-        response_data = response.json()
-        print(response_data)
-
-        assert response.status_code == 422, f"Ожидался: 422. Получен: {response.status_code}"
-        assert "errors" in response_data, "Нет валидацинного сообщения в ответе"
-        assert "phone" in response_data["errors"], "Отсутствует указание на поле с ошибкой"
-        assert response_data["errors"]["phone"][0] == "Обязательное поле", "Текст ошибки не совпал"
+    

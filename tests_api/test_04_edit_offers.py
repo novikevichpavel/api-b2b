@@ -7,6 +7,7 @@ class TestEditOffers:
 
     api = OffersAPI()
 
+    @pytest.mark.api_tests
     @pytest.mark.smoke
     @pytest.mark.regression
     def test_update_offer_invalid_status(self, auth_user, create_offer_payload, connection_db, create_offer_fixt):
@@ -38,6 +39,7 @@ class TestEditOffers:
         assert response_data["message"] == "Товар в текущем статусе нельзя редактировать"
         assert db_data == old_description
 
+    @pytest.mark.api_tests
     @pytest.mark.smoke
     @pytest.mark.regression
     @pytest.mark.parametrize("status_id, description", 
@@ -73,6 +75,7 @@ class TestEditOffers:
         assert db_data["status_id"] == status_id
         assert db_data["description"] == description
 
+    @pytest.mark.api_tests
     @pytest.mark.smoke
     @pytest.mark.regression
     @pytest.mark.parametrize("prop_option", [9514, 9751, 9752, 9753, 14669])

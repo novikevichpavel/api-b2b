@@ -1,8 +1,9 @@
 import requests
+from config.config import API_BASE_URL
 
-BASE_PATH = "https://api-test6-11.emall.by/api/b2b/v1"
 
 class OfferDraftApi:
+    BASE_URL = API_BASE_URL
 
     endpoint = "/offer-drafts"
     bulk_endpoint = "/offer-drafts/bulk"
@@ -10,7 +11,7 @@ class OfferDraftApi:
     def create_offer_draft_manually(self, headers, payload):
          
         return requests.post(
-            f"{BASE_PATH}{self.endpoint}",
+            f"{self.BASE_URL}{self.endpoint}",
             headers=headers,
             json=payload
         )
@@ -18,7 +19,7 @@ class OfferDraftApi:
     def create_offer_draft_bulk(self, headers, payload):
 
          return requests.post(
-            f"{BASE_PATH}{self.bulk_endpoint}",
+            f"{self.BASE_URL}{self.bulk_endpoint}",
             headers=headers,
             json=payload
         )

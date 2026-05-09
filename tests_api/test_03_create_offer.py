@@ -7,6 +7,7 @@ class TestProduct:
 
     api = OffersAPI()
 
+    @pytest.mark.api_tests
     @pytest.mark.smoke
     @pytest.mark.regression
     def test_create_offer(self, auth_user, create_offer_payload, connection_db, seller_id_from_db):
@@ -40,6 +41,7 @@ class TestProduct:
         assert seller_id_from_db == db_data["seller_id"], f"ID на товар в offers: {db_data["seller_id"]}, \
             id в sellers: {seller_id_from_db}"
 
+    @pytest.mark.api_tests
     @pytest.mark.regression
     def test_repeat_create_same_offer(self, auth_user, create_offer_payload, connection_db):
         """Тест на валидацию при создании дублируещего товара или товара, если бракод уже присвоен другому товару"""
@@ -64,6 +66,7 @@ class TestProduct:
         assert barcode_list == 1, f"Несколько записей с таким баркодом. Кол-во строк: {barcode_list}. \
             Баркод: {create_offer_payload["offers"][0]["barcode"]}"
 
+    @pytest.mark.api_tests
     @pytest.mark.regression
     @pytest.mark.parametrize("level", [1, 2])
     def test_invalid_category_level(self, auth_user, create_offer_payload, connection_db, seller_id_from_db, level):
@@ -98,6 +101,7 @@ class TestProduct:
         assert "offers.0.category_id" in response_data["errors"], "Отсутствует указание на товар в валидацинном сообщении"
         assert db_response is None, f"Ответ из БД: {db_response}"
 
+    @pytest.mark.api_tests
     @pytest.mark.smoke
     @pytest.mark.regression
     def test_requiered_properties(self, auth_user, create_offer_payload, connection_db):
@@ -137,6 +141,7 @@ class TestProduct:
         assert "offers.0.properties.149" in response_data["errors"], "Нет указания на характеристику"
         assert db_data["is_required"] == 1, f"Характеристика не обязательна. Параметр в БД: {db_data['is_required']}"
 
+    @pytest.mark.api_tests
     @pytest.mark.smoke
     @pytest.mark.regression
     def test_check_importer_name_is_required(self, auth_user, create_offer_payload, connection_db):
@@ -159,6 +164,7 @@ class TestProduct:
             'Поле "offers.0.importer_name" обязательно для заполнения, когда offers.0.country_id не равно 80.'
         assert payload["offers"][0]["country_id"] != 80
 
+    @pytest.mark.api_tests
     @pytest.mark.smoke
     @pytest.mark.regression
     def test_num_barcode(self, auth_user, create_offer_payload, connection_db):
@@ -190,6 +196,7 @@ class TestProduct:
         assert response_data["errors"]["offers.0.barcode"][0] == "Значение поля должно быть строкой"
         assert db_data == None, f"В ответе из БД содержатся данные по товару: {db_data['id']}"
 
+    @pytest.mark.api_tests
     @pytest.mark.smoke
     @pytest.mark.regression
     @pytest.mark.parametrize("barcode", ["1847563", "184756376"])
