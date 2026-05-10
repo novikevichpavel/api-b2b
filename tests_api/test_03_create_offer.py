@@ -7,39 +7,30 @@ class TestProduct:
 
     api = OffersAPI()
 
-    # @pytest.mark.api_tests
-    # @pytest.mark.smoke
-    # @pytest.mark.regression
-    # def test_create_offer(self, auth_user, create_offer_payload, connection_db, seller_id_from_db):
-    #     """Тест создания товара с валидными данными"""
+    @pytest.mark.api_tests
+    @pytest.mark.smoke
+    @pytest.mark.regression
+    def test_create_offer(self, auth_user, create_offer_payload, connection_db):
+        """Тест создания товара с валидными данными"""
 
-    #     response = self.api.create_offer(
-    #         headers={"Apitoken": auth_user["api_token"]},
-    #         payload=create_offer_payload
-    #     )
+        response = self.api.create_offer(
+            headers={"Apitoken": auth_user["api_token"]},
+            payload=create_offer_payload
+        )
 
-    #     response_data = response.json()
-    #     print(f"ID созданного товара: {response_data["offer_ids"][0]}")
-    #     print(response_data)
+        response_data = response.json()
 
-    #     offer_id = response_data["offer_ids"][0]
+        offer_id = response_data["offer_ids"][0]
 
-    #     with connection_db.cursor() as cursor:
-    #         cursor.execute(
-    #             "SELECT * FROM offers WHERE id = %s", 
-    #             (offer_id,)
-    #             )
-    #         db_data = cursor.fetchone()
+        offer_db = connection_db.get_offer_by_id(offer_id,)
+        seller_id = connection_db.get_seller_id_by_token(auth_user["api_token"])
 
-
-    #     print(f"ID созданного товара в БД: {db_data["id"]}")
-
-    #     assert response.status_code == 201, f"Ожидася статус - 201, получен {response.status_code}"
-    #     assert "offer_ids" in response_data, "ID товара отсутсвует в ответе от сервера"
-    #     assert isinstance(response_data["offer_ids"][0], int), "ID товара должно быть числовым значением"
-    #     assert db_data["id"] == offer_id, f"ID товара БД не совпадает с ID API. БД: {db_data["id"]}"
-    #     assert seller_id_from_db == db_data["seller_id"], f"ID на товар в offers: {db_data["seller_id"]}, \
-    #         id в sellers: {seller_id_from_db}"
+        assert response.status_code == 201, f"Ожидася статус - 201, получен {response.status_code}"
+        assert "offer_ids" in response_data, "ID товара отсутсвует в ответе от сервера"
+        assert isinstance(response_data["offer_ids"][0], int), "ID товара должно быть числовым значением"
+        assert offer_db["id"] == offer_id, f"ID товара БД не совпадает с ID API. БД: {offer_db["id"]}"
+        assert seller_id == offer_db["seller_id"], f"ID на товар в offers: {offer_db["seller_id"]}, \
+            id в sellers: {seller_id}"
     
     @pytest.mark.api_tests
     @pytest.mark.regression
@@ -52,11 +43,6 @@ class TestProduct:
         )
 
         response_data = response.json()
-        print(response_data["errors"]["offers.0.barcode"][0])
-
-        # with connection_db.cursor() as cursor:
-        #     cursor.execute("SELECT COUNT(*) AS barcode_list FROM offers WHERE barcode = %s", (create_offer_payload["offers"][0]["barcode"]))
-        #     barcode_list = cursor.fetchone()["barcode_list"]
 
         barcode_count = connection_db.get_offer_count_by_barcode(create_offer_payload["offers"][0]["barcode"],)
 
@@ -109,7 +95,6 @@ class TestProduct:
         )
 
         response_data = response.json()
-        print(response_data)
 
         response_keys = list(response_data["errors"].keys())[0]
 

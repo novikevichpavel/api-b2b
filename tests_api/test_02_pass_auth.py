@@ -41,7 +41,7 @@ class TestSellerAuth:
         print(response_data)
 
         assert response.status_code == 422, f"Ожидался - 422. Получен: {response.status_code}"
-        assert "errors" in response_data, "Сообщение отсутсвует в теле ответа"
+        assert "errors" in response_data, "Сообщение отсутсвует в теле ответа"cls
         assert "phone" in response_data["errors"], "Отсутсвует указание на поле с ошибкой в теле ответа"
         assert response_data["errors"]["phone"][0] == "Введенный номер телефона не связан ни с одним УНП"
     
@@ -77,13 +77,10 @@ class TestSellerAuth:
         response_data = response.json()
         seller_unp = response_data.get("unp")
 
-        with connection_db.cursor() as cursor:
-            cursor.execute("SELECT unp FROM seller_accounts WHERE phone = %s;", (auth_user_payload["phone"],))
-            db_unp = cursor.fetchone()
+        seller_db_unp = connection_db.get_seller_unp_by_phone(auth_user_payload["phone"])
 
-        assert db_unp is not None, "UNP не найден в БД"
-        print(f"Получен УНП: {db_unp['unp']}")
-        assert db_unp["unp"] == seller_unp, "УНП не совпали"
+        assert seller_db_unp is not None, "UNP не найден в БД"
+        assert seller_db_unp == seller_unp, "УНП не совпали"
 
     @pytest.mark.api_tests
     @pytest.mark.smoke
@@ -99,12 +96,10 @@ class TestSellerAuth:
         seller_unp = resp_data.get("unp")
         phone_num = auth_user_payload["phone"]
 
-        with connection_db.cursor() as cursor:
-            cursor.execute("SELECT api_token FROM seller_accounts WHERE unp = %s AND phone = %s", (seller_unp, phone_num))
-            db_token = cursor.fetchone()
+        api_token_db = connection_db.get_api_token_by_phone(seller_unp, phone_num)
 
-        assert resp_data.get("api_token") == db_token["api_token"], \
-            f"Токены не совпадают. API:{resp_data["api_token"]}, БД:{db_token["api_token"]}"
+        assert resp_data.get("api_token") == api_token_db, \
+            f"Токены не совпадают. API:{resp_data["api_token"]}, БД:{api_token_db}"
 
     @pytest.mark.api_tests
     @pytest.mark.regression

@@ -43,33 +43,64 @@ class DBClient:
     
     def get_offer_by_barcode(self, barcode):
         return (
-            self.get_one("SELECT * FROM offers WHERE barcode = %s", (barcode,))
+            self.get_one(
+                "SELECT * FROM offers WHERE barcode = %s", 
+                (barcode,)
+                )
         )
     
     def get_offer_by_id(self, offer_id):
         return (
-            self.get_one("SELECT * FROM offers WHERE id = %s", (offer_id,))
+            self.get_one(
+                "SELECT * FROM offers WHERE id = %s", 
+                (offer_id,)
+                )
         )
     
     def get_property_required_status(self, category_id, property_id):
         return (
-            self.get_one("SELECT is_required FROM category_properties WHERE category_id = %s AND property_id = %s", (category_id, property_id,))
+            self.get_one(
+                "SELECT is_required FROM category_properties WHERE category_id = %s AND property_id = %s", 
+                (category_id, property_id,)
+                )
         )
     
     def get_category_id_by_level(self, category_level):
         return (
-            self.get_one("SELECT id FROM categories WHERE level = %s", (category_level,))
+            self.get_one(
+                "SELECT id FROM categories WHERE level = %s", 
+                (category_level,)
+                )
         )
     
     def get_offer_by_cat_id(self, category_id):
         return(
-            self.get_one("SELECT * FROM offers WHERE category_id = %s", (category_id,))
+            self.get_one(
+                "SELECT * FROM offers WHERE category_id = %s", 
+                (category_id,)
+                )
         )
     
     def get_offer_count_by_barcode(self, barcode):
         return(
-            self.get_one("SELECT COUNT(*) AS count FROM offers WHERE barcode = %s", (barcode,))["count"]
+            self.get_one(
+                "SELECT COUNT(*) AS count FROM offers WHERE barcode = %s", 
+                (barcode,))["count"]
         )
     
+    def get_seller_unp_by_phone(self, phone_num):
+        return(
+            self.get_one(
+                "SELECT unp FROM seller_accounts WHERE phone = %s", 
+                (phone_num,))["unp"]
+        )
+
+    def get_api_token_by_phone(self, seller_unp, phone_num):
+        return (
+            self.get_one(
+                "SELECT api_token FROM seller_accounts WHERE unp = %s AND phone = %s", 
+                (seller_unp, phone_num,))["api_token"]
+        )
+
     def close(self):
         self.db_conn.close()

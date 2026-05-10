@@ -1,23 +1,9 @@
 import pytest
-import pymysql
 from api.password_auth import UserAuth
 from api.offers import OffersAPI
 from config.config import DB
 from db_client.db_client import DBClient
 
-# @pytest.fixture
-# def connection_db():
-#     """Менеджер для создания подключения к БД"""
-    
-#     with pymysql.connect(
-#         host=DB["host"],
-#         port=DB["port"],
-#         user=DB["user"],
-#         password=DB["password"],
-#         database=DB["database"],
-#         cursorclass=pymysql.cursors.DictCursor
-#     ) as db_connection:
-#         yield db_connection
 
 @pytest.fixture
 def connection_db():
@@ -25,22 +11,6 @@ def connection_db():
     db_client = DBClient()
     yield db_client
     db_client.close()
-
-
-
-
-@pytest.fixture
-def seller_id_from_db(connection_db, auth_user):
-    """Фикстура получение ID селлера из БД"""
-
-    with connection_db.cursor() as cursor:
-        cursor.execute("SELECT unp FROM seller_accounts WHERE api_token = %s", (auth_user["api_token"],))
-        seller_unp = cursor.fetchone()
-
-        cursor.execute("SELECT id FROM sellers WHERE unp = %s;", (seller_unp["unp"],))
-        seller_id = cursor.fetchone()["id"]
-
-    return seller_id
 
 
 @pytest.fixture
