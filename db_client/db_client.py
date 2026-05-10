@@ -15,7 +15,7 @@ class DBClient:
 
     def get_one(self, sql, params=None):
         with self.db_conn.cursor() as cursor:
-            cursor.execute(sql, (params))
+            cursor.execute(sql, params)
 
             return cursor.fetchone()
         
@@ -27,7 +27,7 @@ class DBClient:
         
     def sql_execute(self, sql, params=None):
         with self.db_conn.cursor() as cursor:
-            cursor.execute(sql, (params))
+            cursor.execute(sql, params)
 
     def get_seller_id(self, api_token):
         sql_response = self.get_one(
@@ -41,4 +41,15 @@ class DBClient:
 
         return sql_response["id"] if sql_response else None
     
-    def 
+    def get_offer_barcode(self, barcode):
+        return (
+            self.get_one("SELECT * FROM offers WHERE barcode = %s", (barcode,))
+        )
+    
+    def get_offer_id(self, offer_id):
+        return (
+            self.get_one("SELECT * FROM offers WHERE id = %s", (offer_id,))
+        )
+    
+    def close(self):
+        self.db_conn.close()

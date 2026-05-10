@@ -3,20 +3,30 @@ import pymysql
 from api.password_auth import UserAuth
 from api.offers import OffersAPI
 from config.config import DB
+from db_client.db_client import DBClient
+
+# @pytest.fixture
+# def connection_db():
+#     """Менеджер для создания подключения к БД"""
+    
+#     with pymysql.connect(
+#         host=DB["host"],
+#         port=DB["port"],
+#         user=DB["user"],
+#         password=DB["password"],
+#         database=DB["database"],
+#         cursorclass=pymysql.cursors.DictCursor
+#     ) as db_connection:
+#         yield db_connection
 
 @pytest.fixture
 def connection_db():
     """Менеджер для создания подключения к БД"""
-    
-    with pymysql.connect(
-        host=DB["host"],
-        port=DB["port"],
-        user=DB["user"],
-        password=DB["password"],
-        database=DB["database"],
-        cursorclass=pymysql.cursors.DictCursor
-    ) as db_connection:
-        yield db_connection
+    db_client = DBClient()
+    yield db_client
+    db_client.close()
+
+
 
 
 @pytest.fixture
