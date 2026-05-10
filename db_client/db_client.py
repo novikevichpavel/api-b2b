@@ -29,7 +29,7 @@ class DBClient:
         with self.db_conn.cursor() as cursor:
             cursor.execute(sql, params)
 
-    def get_seller_id(self, api_token):
+    def get_seller_id_by_token(self, api_token):
         sql_response = self.get_one(
             """SELECT sellers.id 
             FROM sellers 
@@ -41,14 +41,34 @@ class DBClient:
 
         return sql_response["id"] if sql_response else None
     
-    def get_offer_barcode(self, barcode):
+    def get_offer_by_barcode(self, barcode):
         return (
             self.get_one("SELECT * FROM offers WHERE barcode = %s", (barcode,))
         )
     
-    def get_offer_id(self, offer_id):
+    def get_offer_by_id(self, offer_id):
         return (
             self.get_one("SELECT * FROM offers WHERE id = %s", (offer_id,))
+        )
+    
+    def get_property_required_status(self, category_id, property_id):
+        return (
+            self.get_one("SELECT is_required FROM category_properties WHERE category_id = %s AND property_id = %s", (category_id, property_id,))
+        )
+    
+    def get_category_id_by_level(self, category_level):
+        return (
+            self.get_one("SELECT id FROM categories WHERE level = %s", (category_level,))
+        )
+    
+    def get_offer_by_cat_id(self, category_id):
+        return(
+            self.get_one("SELECT * FROM offers WHERE category_id = %s", (category_id,))
+        )
+    
+    def get_offer_count_by_barcode(self, barcode):
+        return(
+            self.get_one("SELECT COUNT(*) AS count FROM offers WHERE barcode = %s", (barcode,))["count"]
         )
     
     def close(self):
