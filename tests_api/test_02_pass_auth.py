@@ -41,7 +41,7 @@ class TestSellerAuth:
         print(response_data)
 
         assert response.status_code == 422, f"Ожидался - 422. Получен: {response.status_code}"
-        assert "errors" in response_data, "Сообщение отсутсвует в теле ответа"cls
+        assert "errors" in response_data, "Сообщение отсутсвует в теле ответа"
         assert "phone" in response_data["errors"], "Отсутсвует указание на поле с ошибкой в теле ответа"
         assert response_data["errors"]["phone"][0] == "Введенный номер телефона не связан ни с одним УНП"
     
