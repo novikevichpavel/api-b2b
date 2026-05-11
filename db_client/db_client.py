@@ -101,6 +101,14 @@ class DBClient:
                 "SELECT api_token FROM seller_accounts WHERE unp = %s AND phone = %s", 
                 (seller_unp, phone_num,))["api_token"]
         )
+    
+    def update_offer_status(self, status_id, offer_id):
+        return (
+            self.sql_execute(
+                "UPDATE offers SET status_id = %s WHERE id = %s",
+                (status_id, offer_id)
+            )
+        )
 
     def close(self):
         self.db_conn.close()
