@@ -1,41 +1,42 @@
 import pytest
 from api.offers import OffersAPI
 import copy
+import time
 
 
 class TestEditOffers:
 
     api = OffersAPI()
 
-    # @pytest.mark.api_tests
-    # @pytest.mark.smoke
-    # @pytest.mark.regression
-    # def test_update_offer_invalid_status(self, auth_user, create_offer_payload, connection_db, create_offer_fixt):
-    #     """Тест редактирования товара с неподходящим статусом"""
+    @pytest.mark.api_tests
+    @pytest.mark.smoke
+    @pytest.mark.regression
+    def test_update_offer_invalid_status(self, auth_user, create_offer_payload, connection_db, create_offer_fixt):
+        """Тест редактирования товара с неподходящим статусом"""
 
-    #     offer_id = create_offer_fixt
+        offer_id = create_offer_fixt
 
-    #     old_description = create_offer_payload["offers"][0]["description"]
+        old_description = create_offer_payload["offers"][0]["description"]
 
-    #     payload = copy.deepcopy(create_offer_payload)
-    #     payload["offers"][0]["description"] = "Новое описание товара для теста"
-    #     payload["offers"][0]["id"] = offer_id
+        payload = copy.deepcopy(create_offer_payload)
+        payload["offers"][0]["description"] = "Новое описание товара для теста"
+        payload["offers"][0]["id"] = offer_id
 
-    #     response = self.api.change_offer(
-    #         headers={"Apitoken": auth_user["api_token"]},
-    #         payload=payload
-    #     )
+        response = self.api.change_offer(
+            headers={"Apitoken": auth_user["api_token"]},
+            payload=payload
+        )
 
-    #     response_data = response.json()
+        response_data = response.json()
 
-    #     offer_db_description = connection_db.get_offer_by_id(offer_id)
+        offer_db_description = connection_db.get_offer_by_id(offer_id)
 
-    #     assert response.status_code == 409, f"Ожидался: 409, получени: {response.status_code}"
-    #     assert "error" in response_data
-    #     assert "message" in response_data
-    #     assert response_data["error"] == "offer_has_invalid_status_for_edit"
-    #     assert response_data["message"] == "Товар в текущем статусе нельзя редактировать"
-    #     assert offer_db_description["description"] == old_description
+        assert response.status_code == 409, f"Ожидался: 409, получени: {response.status_code}"
+        assert "error" in response_data
+        assert "message" in response_data
+        assert response_data["error"] == "offer_has_invalid_status_for_edit"
+        assert response_data["message"] == "Товар в текущем статусе нельзя редактировать"
+        assert offer_db_description["description"] == old_description
 
     @pytest.mark.api_tests
     @pytest.mark.smoke
@@ -43,14 +44,13 @@ class TestEditOffers:
     @pytest.mark.parametrize("status_id, description", 
                             [
                                 (3, "Описание для статуса 3"),
-                                # (4, "Описание для статуса 4"), 
-                                # (5, "Описание для статуса 5")
+                                (4, "Описание для статуса 4"), 
+                                (5, "Описание для статуса 5")
                             ])
     def test_update_offer_valid_status(self, connection_db, create_offer_payload, create_offer_fixt, auth_user, status_id, description):
         """Тест изменение товара в подходящем статусе"""
 
         offer_id = create_offer_fixt
-
 
         connection_db.update_offer_status(status_id, offer_id)
 
@@ -62,51 +62,47 @@ class TestEditOffers:
             headers={"Apitoken": auth_user["api_token"]},
             payload=payload
         )
-        
-        response_data = response.json()
 
-        print(response_data)
+        assert response.status_code == 200
 
         offer_db_status = connection_db.get_offer_by_id(offer_id)
 
-        assert response.status_code == 204
         assert offer_db_status is not None
         assert offer_db_status["status_id"] == status_id
         assert offer_db_status["description"] == description
 
-    # @pytest.mark.api_tests
-    # @pytest.mark.smoke
-    # @pytest.mark.regression
-    # @pytest.mark.parametrize("prop_option", [9514, 9751, 9752, 9753, 14669])
-    # def test_update_requiered_prop_valid_status(self, connection_db, create_offer_payload, create_offer_fixt, auth_user, prop_option):
+    @pytest.mark.api_tests
+    @pytest.mark.smoke
+    @pytest.mark.regression
+    @pytest.mark.parametrize("prop_option, status", 
+                                [(9514, 3),
+                                (9751, 4), 
+                                (9752, 5), 
+                                (9753, 4), 
+                                (14669, 3)
+                                ])
+    def test_update_requiered_prop_valid_status(self, connection_db, create_offer_payload, create_offer_fixt, auth_user, prop_option, status):
 
-    #     offer_id = create_offer_fixt
+        offer_id = create_offer_fixt
 
-    #     with connection_db.cursor() as cursor:
-    #         cursor.execute("UPDATE offers SET status_id = 3 WHERE id = %s", (offer_id,))
-    #         connection_db.commit()
+        connection_db.update_offer_status(status, offer_id)
 
-    #     payload = copy.deepcopy(create_offer_payload)
-    #     payload["offers"][0]["properties"]["149"] = prop_option
-    #     payload["offers"][0]["id"] = offer_id
+        payload = copy.deepcopy(create_offer_payload)
+        payload["offers"][0]["properties"]["149"] = prop_option
+        payload["offers"][0]["id"] = offer_id
 
-    #     response = self.api.change_offer(
-    #         headers={"Apitoken": auth_user["api_token"]},
-    #         payload=payload
-    #     )
+        response = self.api.change_offer(
+            headers={"Apitoken": auth_user["api_token"]},
+            payload=payload
+        )
 
-    #     response_data = response.json()
+        assert response.status_code == 200
 
-    #     with connection_db.cursor() as cursor:
-    #         cursor.execute("SELECT id FROM offer_properties WHERE offer_id = %s AND property_id = %s", (offer_id, 149))
-    #         offer_prop_id = cursor.fetchone()["id"]
+        response_data = response.json()
 
-    #         cursor.execute("SELECT property_option_id FROM offer_property_values WHERE offer_property_id = %s", (offer_prop_id,))
-    #         prop_option_id = cursor.fetchone()["property_option_id"]
+        prop_option_id = connection_db.get_property_option_id(offer_id, 149)["property_option_id"]
 
-    #     assert prop_option_id is not None
-
-    #     assert response_data is not None
-    #     assert response.status_code == 200
-    #     assert prop_option_id == prop_option
+        assert prop_option_id is not None
+        assert response_data is not None
+        assert prop_option_id == prop_option
 

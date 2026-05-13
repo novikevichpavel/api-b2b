@@ -109,6 +109,20 @@ class DBClient:
                 (status_id, offer_id)
             )
         )
+    
+    def get_property_option_id(self, offer_id, property_id):
+        return (
+            self.get_one(
+            """
+            SELECT opv.property_option_id
+            FROM offer_properties op
+            JOIN offer_property_values opv
+            ON opv.offer_property_id = op.id
+            WHERE op.offer_id = %s
+            AND op.property_id = %s
+            """,
+            (offer_id, property_id))
+        )
 
     def close(self):
         self.db_conn.close()

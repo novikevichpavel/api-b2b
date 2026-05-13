@@ -23,5 +23,3 @@ class OfferDraftApi:
             headers=headers,
             json=payload
         )
-
-    # def edit_offer_draft
