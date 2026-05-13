@@ -1,7 +1,6 @@
 import pytest
 from api.offers import OffersAPI
 import copy
-import time
 
 
 class TestEditOffers:
@@ -31,7 +30,7 @@ class TestEditOffers:
 
         offer_db_description = connection_db.get_offer_by_id(offer_id)
 
-        assert response.status_code == 409, f"Ожидался: 409, получени: {response.status_code}"
+        assert response.status_code == 409, f"Ожидался: 409, получен: {response.status_code}"
         assert "error" in response_data
         assert "message" in response_data
         assert response_data["error"] == "offer_has_invalid_status_for_edit"
@@ -82,6 +81,7 @@ class TestEditOffers:
                                 (14669, 3)
                                 ])
     def test_update_requiered_prop_valid_status(self, connection_db, create_offer_payload, create_offer_fixt, auth_user, prop_option, status):
+        """Тест на изменение обязательной характеристики товара в подходящих статусах товара"""
 
         offer_id = create_offer_fixt
 
